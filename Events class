@@ -16,7 +16,6 @@ public class Events {
     }
     
     public static boolean event1 (String mentor, String mentee, Socialgraph graph){
-        //event 1
         System.out.println("\n----------------------------------------------------");
         System.out.println("Event 1 : Teaching a stranger to solve lab qustions");
         boolean isFriendOf ;
