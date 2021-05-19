@@ -72,7 +72,7 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
             if (head == null) {
                 head = newVertex;
             } else {
-                Vertex<T, N> previous = head;;
+                Vertex<T, N> previous = head;
                 while (temp != null) {
                     previous = temp;
                     temp = temp.nextVertex;
@@ -133,6 +133,17 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
             temp = temp.nextVertex;
         }
         return temp.vertexInfo;
+    }
+    
+    public String getStudentVertex(int pos) {
+        if (pos > size - 1 || pos < 0) {
+            return null;
+        }
+        Vertex<T, N> temp = head;
+        for (int i = 0; i < pos; i++) {
+            temp = temp.nextVertex;
+        }
+        return temp.vertexInfo.toString();
     }
 
     //add a new edge from source to destination with a rep point
@@ -277,7 +288,6 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
         Vertex<T, N> sourceVertex = head;
         while (sourceVertex != null) {
             if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                // Reached source vertex, look for destination now 
                 Edge<T, N> currentEdge = sourceVertex.firstEdge;
                 while (currentEdge != null) {
                     if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) // destination vertex found 
@@ -346,12 +356,7 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
             System.out.print("# " + temp.vertexInfo + " --> ");
             Edge<T, N> currentEdge = temp.firstEdge;
             while (currentEdge != null) {
-//                if(currentEdge.toVertex.rep != null){
-                    System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.fromVertexRep + ")] ");
-//                }
-//                else{
-//                    System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.toVertex.destRep + ")] ");
-//                }
+                System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.fromVertexRep + ")] ");
                 currentEdge = currentEdge.nextEdge;
             }
             System.out.println();
