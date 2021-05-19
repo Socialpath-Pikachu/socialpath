@@ -1,0 +1,396 @@
+package Socialpath;
+
+import java.util.ArrayList;
+
+public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
+
+    Vertex<T, N> head;
+    int size; 
+
+    public Socialgraph() {
+        head = null;
+        size = 0;
+    }
+
+    public void clear() {
+        head = null;
+    }
+
+    //get number of vertices 
+    public int getSize() {
+        return this.size;
+    }
+
+    //get indeg of a vertex
+    public int getIndeg(T v) {
+        if (hasVertex(v) == true) {
+            Vertex<T, N> temp = head;
+            while (temp != null) {
+                if (temp.vertexInfo.compareTo(v) == 0) {
+                    return temp.indeg;
+                }
+                temp = temp.nextVertex;
+            }
+        }
+        return -1;
+    }
+
+    //get outdeg of a vertex
+    public int getOutdeg(T v) {
+        if (hasVertex(v) == true) {
+            Vertex<T, N> temp = head;
+            while (temp != null) {
+                if (temp.vertexInfo.compareTo(v) == 0) {
+                    return temp.outdeg;
+                }
+                temp = temp.nextVertex;
+            }
+        }
+        return -1;
+    }
+
+    //is this vertex in the graph?
+    public boolean hasVertex(T v) {
+        if (head == null) {
+            return false;
+        }
+        Vertex<T, N> temp = head;
+        while (temp != null) {
+            if (temp.vertexInfo.compareTo(v) == 0) {
+                return true;
+            }
+            temp = temp.nextVertex;
+        }
+        return false;
+    }
+
+    //add new vertex to graph
+    public boolean addVertex(T v) {
+        if (hasVertex(v) == false) { //the vertex is not in the graph
+            Vertex<T, N> temp = head;
+            Vertex<T, N> newVertex = new Vertex<>(v, null);
+            if (head == null) {
+                head = newVertex;
+            } else {
+                Vertex<T, N> previous = head;;
+                while (temp != null) {
+                    previous = temp;
+                    temp = temp.nextVertex;
+                }
+                previous.nextVertex = newVertex;
+            }
+            size++;
+            return true;
+        } else //vertex alr exist 
+        {
+            return false;
+        }
+    }
+
+    //find the index of the vertex
+    public int getIndex(T v) {
+        Vertex<T, N> temp = head;
+        int pos = 0;
+        while (temp != null) {
+            if (temp.vertexInfo.compareTo(v) == 0) {
+                return pos;
+            }
+            temp = temp.nextVertex;
+            pos += 1;
+        }
+        return -1;
+    }
+
+    //return an ArrayList which stores all students nodes
+    public ArrayList<T> getAllStudents() {
+        ArrayList<T> list = new ArrayList<>();
+        Vertex<T, N> temp = head;
+        while (temp != null) {
+            list.add(temp.vertexInfo);
+            temp = temp.nextVertex;
+        }
+        return list;
+    }
+
+    //return all vertices to an arraylist
+    public ArrayList<Vertex<T, N>> getAllVertices() {
+        ArrayList<Vertex<T, N>> list = new ArrayList<>();
+        Vertex<T, N> temp = head;
+        while (temp != null) {
+            list.add(temp);
+            temp = temp.nextVertex;
+        }
+        return list;
+    }
+
+    //get vertex at specific index
+    public T getVertex(int pos) {
+        if (pos > size - 1 || pos < 0) {
+            return null;
+        }
+        Vertex<T, N> temp = head;
+        for (int i = 0; i < pos; i++) {
+            temp = temp.nextVertex;
+        }
+        return temp.vertexInfo;
+    }
+
+    //add a new edge from source to destination with a rep point
+    //only source have a rep point while destination doesn't
+    public boolean addDirectedEdge(T source, T destination, N srcRep) { //1 -> 3 | 1's rep : 10
+        if (head == null) {
+            return false;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                Vertex<T, N> destinationVertex = head;
+                while (destinationVertex != null) {
+                    if (destinationVertex.vertexInfo.compareTo(destination) == 0) {
+                        Edge<T, N> newEdge = new Edge<>(destinationVertex, srcRep, sourceVertex.firstEdge);
+                        sourceVertex.firstEdge = newEdge;
+                        sourceVertex.outdeg++;
+                        destinationVertex.indeg++;
+                        sourceVertex.rep = srcRep;
+                        return true;
+                    }
+                    destinationVertex = destinationVertex.nextVertex;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
+    }
+
+    //add undirected edge with rep point
+    //srcName -> destName , srcName's rep point = srcRep
+    //destName -> srcName , destName's rep point = destRep
+    public boolean addUndirectedEdge(T srcName, T destName, N srcRep, N destRep){ //1,7,3,4
+        if(head == null){
+            return false;
+        }
+        if(!hasVertex(srcName) || !hasVertex(destName)){
+            return false;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(srcName) == 0) {
+                Vertex<T, N> destinationVertex = head;
+                while (destinationVertex != null) {
+                    if (destinationVertex.vertexInfo.compareTo(destName) == 0) {
+                        Edge<T, N> newSrcEdge = new Edge<>(destinationVertex, srcRep, sourceVertex.firstEdge);//1->7 , 1's rep : 3
+                        Edge<T, N> newDestEdge = new Edge<>(sourceVertex, destRep, destinationVertex.firstEdge);//7->1 , 7's rep : 4
+                        sourceVertex.firstEdge = newSrcEdge; 
+                        destinationVertex.firstEdge = newDestEdge;
+                        sourceVertex.outdeg++;
+                        sourceVertex.indeg++;
+                        destinationVertex.indeg++;
+                        destinationVertex.outdeg++; 
+                        sourceVertex.rep = srcRep; //1->7 , rep : 3
+                        destinationVertex.rep = destRep; //7->1 , rep : 4
+                        return true;
+                    }
+                    destinationVertex = destinationVertex.nextVertex;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
+    }
+    
+    public boolean addUndirectedEdge(T source, T destination, N w){
+        if (head == null) {
+            return false;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                // Reached source vertex, look for destination now
+                Vertex<T, N> destinationVertex = head;
+                while (destinationVertex != null) {
+                    if (destinationVertex.vertexInfo.compareTo(destination) == 0) {
+                        // Reached destination vertex, add undirected edge here
+                        Edge<T, N> newSrcEdge = new Edge<>(destinationVertex, w, sourceVertex.firstEdge);
+                        Edge<T, N> newDestEdge = new Edge<>(sourceVertex, w, destinationVertex.firstEdge);
+                        sourceVertex.firstEdge = newSrcEdge; 
+                        destinationVertex.firstEdge = newDestEdge;
+                        sourceVertex.outdeg++;
+                        sourceVertex.indeg++;
+                        destinationVertex.indeg++;
+                        destinationVertex.outdeg++;
+                        return true;
+                    }
+                    destinationVertex = destinationVertex.nextVertex;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
+    }
+    
+    public boolean removeEdge(T source, T destination) {
+        if (head == null) {
+            return false;
+        } else if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        } else {
+            Vertex<T,N> sourceVertex = head;
+            while (sourceVertex != null) {
+                if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                    Edge<T,N> currentEdge = sourceVertex.firstEdge;
+                    Edge<T,N> previousEdge = sourceVertex.firstEdge;
+                    while (currentEdge != null) {
+                        if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) {
+                            if (currentEdge == sourceVertex.firstEdge) {   // when the edge is the first edge
+                                sourceVertex.firstEdge = currentEdge.nextEdge;
+                            } else {  // when the edge is in the centre or at the last
+                                previousEdge.nextEdge = currentEdge.nextEdge;
+                            }
+                            currentEdge.nextEdge = null;
+                            currentEdge.toVertex = null;
+                            return true;
+                        }
+                        previousEdge = currentEdge;
+                        currentEdge = currentEdge.nextEdge;
+                    }
+                }
+                sourceVertex = sourceVertex.nextVertex;
+            }
+        }
+        return false;
+    }
+    
+    //check whether there is a directed edge
+    public boolean hasDirectedEdge(T source, T destination) {
+        if (head == null) {
+            return false;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                // Reached source vertex, look for destination now 
+                Edge<T, N> currentEdge = sourceVertex.firstEdge;
+                while (currentEdge != null) {
+                    if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) // destination vertex found 
+                    {
+                        return true;
+                    }
+                    currentEdge = currentEdge.nextEdge;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
+    }
+    
+    //check whether there is an undirected edge
+    public boolean hasUndirectedEdge(T source, T destination) {
+        if (head == null) {
+            return false;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                Edge<T, N> currentEdge = sourceVertex.firstEdge;
+                while (currentEdge != null) {
+                    Vertex<T, N> destVertex = head;
+                    while (destVertex != null) {
+                        if (destVertex.vertexInfo.compareTo(destination) == 0) {
+                            Edge<T, N> currentEdge2 = destVertex.firstEdge;
+                            while(currentEdge2 != null){
+                                if (currentEdge.equals(currentEdge2)) {
+                                    return true;
+                                }
+                                currentEdge2 = currentEdge2.nextEdge;
+                            }
+                        }
+                        destVertex = destVertex.nextVertex;
+                    }
+                    currentEdge = currentEdge.nextEdge;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
+    }
+
+    //retrieve the weight of an edge
+    public N getVertexRep(T source, T destination) {
+        N notFound = null;
+        if (head == null) {
+            return notFound;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return notFound;
+        }
+        Vertex<T, N> sourceVertex = head;
+        while (sourceVertex != null) {
+            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
+                Edge<T, N> currentEdge = sourceVertex.firstEdge;
+                while (currentEdge != null) {
+                    if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) // destination vertex found 
+                    {
+                        return currentEdge.fromVertexRep;
+                    }
+                    currentEdge = currentEdge.nextEdge;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return notFound;
+    }
+
+    //return all neighbours of a vertex to an arraylist
+    public ArrayList<T> getNeighbours(T v) {
+        if (!hasVertex(v)) {
+            return null;
+        }
+        ArrayList<T> list = new ArrayList<T>();
+        Vertex<T, N> temp = head;
+        while (temp != null) {
+            if (temp.vertexInfo.compareTo(v) == 0) {
+                // Reached vertex, look for destination now
+                Edge<T, N> currentEdge = temp.firstEdge;
+                while (currentEdge != null) {
+                    list.add(currentEdge.toVertex.vertexInfo);
+                    currentEdge = currentEdge.nextEdge;
+                }
+            }
+            temp = temp.nextVertex;
+        }
+        return list;
+    }
+
+    //print graph
+    public void printEdges() {
+        Vertex<T, N> temp = head;
+        while (temp != null) {
+            System.out.print("# " + temp.vertexInfo + " --> ");
+            Edge<T, N> currentEdge = temp.firstEdge;
+            while (currentEdge != null) {
+//                if(currentEdge.toVertex.rep != null){
+                    System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.fromVertexRep + ")] ");
+//                }
+//                else{
+//                    System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.toVertex.destRep + ")] ");
+//                }
+                currentEdge = currentEdge.nextEdge;
+            }
+            System.out.println();
+            temp = temp.nextVertex;
+        }
+    }
+
+}
