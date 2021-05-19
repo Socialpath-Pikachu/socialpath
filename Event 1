@@ -1,0 +1,68 @@
+package Socialpath;
+
+import java.util.ArrayList;
+
+public class Event1 {
+
+    public static void main(String[] args) {
+        Socialgraph graph = addToGraph();
+        graph.printEdges();
+        System.out.println("");
+        event1("1","3",graph);
+    }
+    
+    public static boolean event1(String mentor, String mentee, Socialgraph graph){
+        System.out.println("----------------------------------------------------");
+        System.out.println("Event 1 : Teaching a stranger to solve lab qustions");
+        boolean isFriendOf = graph.hasDirectedEdge(mentee, mentor) || graph.hasUndirectedEdge(mentee, mentor);//test
+        if(!isFriendOf){
+            System.out.println(mentor + " is helping " + mentee + " to solve lab questions");
+            System.out.println("Teaching lab questions now...\n");
+            
+            try{
+                Thread.sleep(1000);
+            } catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            
+            double rep = (Math.random() > 0.5) ? 10 : 2;
+            graph.addDirectedEdge(mentor, mentee, rep); //B teaching D, D->B | rep:2
+            System.out.println(mentor + "'s programming skill is " + (rep == 10 ? "good" : "bad"));
+            System.out.println("The learning experience is " + (rep == 10 ? "pleasant" : "unpleasant"));
+            System.out.println(mentor + " rep points relative to " + mentee + " is " + rep);
+            System.out.println("----------------------------------------------------");
+            graph.printEdges();
+            return true;
+        }
+        else{
+            System.out.println("They are friends. Unable to teach a friend.");
+            return false;
+        }
+    }
+    
+    public static Socialgraph addToGraph(){
+        Socialgraph socialgraph = new Socialgraph();
+        String[] students = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        for(String student : students){
+            socialgraph.addVertex(student);
+        }
+        //srcName, destName, srcRep, destRep
+        socialgraph.addUndirectedEdge("1", "7", 3.0, 4.0);
+        socialgraph.addUndirectedEdge("1", "2", 8.0, 5.0);
+        socialgraph.addUndirectedEdge("2", "3", 4.0, 5.0);
+        socialgraph.addUndirectedEdge("2", "5", 2.0, 6.0);
+        socialgraph.addUndirectedEdge("2", "6", 7.0, 9.0);
+        socialgraph.addUndirectedEdge("4", "8", 10.0, 7.0);
+        socialgraph.addUndirectedEdge("4", "10", 7.0, 7.0);
+        socialgraph.addUndirectedEdge("9", "10", 6.0, 5.0);
+        
+        System.out.print("# List of all students : [");
+        ArrayList<Student> studentsList = socialgraph.getAllStudents();
+        for(int i=0; i<studentsList.size()-1; i++){
+            System.out.print(studentsList.get(i) + ", ");
+        }
+        System.out.println(studentsList.get(studentsList.size()-1) + "]");
+        System.out.println("");
+        return socialgraph;
+    }
+}
