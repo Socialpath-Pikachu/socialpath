@@ -291,40 +291,6 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
         }
         return false;
     }
-    
-    //check whether there is an undirected edge
-    public boolean hasUndirectedEdge(T source, T destination) {
-        if (head == null) {
-            return false;
-        }
-        if (!hasVertex(source) || !hasVertex(destination)) {
-            return false;
-        }
-        Vertex<T, N> sourceVertex = head;
-        while (sourceVertex != null) {
-            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                Edge<T, N> currentEdge = sourceVertex.firstEdge;
-                while (currentEdge != null) {
-                    Vertex<T, N> destVertex = head;
-                    while (destVertex != null) {
-                        if (destVertex.vertexInfo.compareTo(destination) == 0) {
-                            Edge<T, N> currentEdge2 = destVertex.firstEdge;
-                            while(currentEdge2 != null){
-                                if (currentEdge.equals(currentEdge2)) {
-                                    return true;
-                                }
-                                currentEdge2 = currentEdge2.nextEdge;
-                            }
-                        }
-                        destVertex = destVertex.nextVertex;
-                    }
-                    currentEdge = currentEdge.nextEdge;
-                }
-            }
-            sourceVertex = sourceVertex.nextVertex;
-        }
-        return false;
-    }
 
     //retrieve the weight of an edge
     public N getVertexRep(T source, T destination) {
