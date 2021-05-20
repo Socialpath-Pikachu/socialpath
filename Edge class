@@ -1,13 +1,11 @@
 package Socialpath;
 
 public class Edge {
-    Vertex srcVertex;
     Vertex toVertex;
     double fromVertexRep;
     Edge nextEdge;
 	
     public Edge(){
-        srcVertex = null;
 	toVertex = null;
 	fromVertexRep = 0;
 	nextEdge = null;
