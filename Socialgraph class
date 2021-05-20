@@ -2,9 +2,9 @@ package Socialpath;
 
 import java.util.ArrayList;
 
-public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
+public class Socialgraph{
 
-    Vertex<T, N> head;
+    Vertex head;
     int size; 
 
     public Socialgraph() {
@@ -22,9 +22,9 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //get indeg of a vertex
-    public int getIndeg(T v) {
+    public int getIndeg(String v) {
         if (hasVertex(v) == true) {
-            Vertex<T, N> temp = head;
+            Vertex temp = head;
             while (temp != null) {
                 if (temp.vertexInfo.compareTo(v) == 0) {
                     return temp.indeg;
@@ -36,9 +36,9 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //get outdeg of a vertex
-    public int getOutdeg(T v) {
+    public int getOutdeg(String v) {
         if (hasVertex(v) == true) {
-            Vertex<T, N> temp = head;
+            Vertex temp = head;
             while (temp != null) {
                 if (temp.vertexInfo.compareTo(v) == 0) {
                     return temp.outdeg;
@@ -50,11 +50,11 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //is this vertex in the graph?
-    public boolean hasVertex(T v) {
+    public boolean hasVertex(String v) {
         if (head == null) {
             return false;
         }
-        Vertex<T, N> temp = head;
+        Vertex temp = head;
         while (temp != null) {
             if (temp.vertexInfo.compareTo(v) == 0) {
                 return true;
@@ -65,14 +65,14 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //add new vertex to graph
-    public boolean addVertex(T v) {
+    public boolean addVertex(String v) {
         if (hasVertex(v) == false) { //the vertex is not in the graph
-            Vertex<T, N> temp = head;
-            Vertex<T, N> newVertex = new Vertex<>(v, null);
+            Vertex temp = head;
+            Vertex newVertex = new Vertex(v, null);
             if (head == null) {
                 head = newVertex;
             } else {
-                Vertex<T, N> previous = head;
+                Vertex previous = head;
                 while (temp != null) {
                     previous = temp;
                     temp = temp.nextVertex;
@@ -88,8 +88,8 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //find the index of the vertex
-    public int getIndex(T v) {
-        Vertex<T, N> temp = head;
+    public int getIndex(String v) {
+        Vertex temp = head;
         int pos = 0;
         while (temp != null) {
             if (temp.vertexInfo.compareTo(v) == 0) {
@@ -102,9 +102,9 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //return an ArrayList which stores all students nodes
-    public ArrayList<T> getAllStudents() {
-        ArrayList<T> list = new ArrayList<>();
-        Vertex<T, N> temp = head;
+    public ArrayList<String> getAllStudents() {
+        ArrayList<String> list = new ArrayList<>();
+        Vertex temp = head;
         while (temp != null) {
             list.add(temp.vertexInfo);
             temp = temp.nextVertex;
@@ -113,55 +113,44 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
 
     //return all vertices to an arraylist
-    public ArrayList<Vertex<T, N>> getAllVertices() {
-        ArrayList<Vertex<T, N>> list = new ArrayList<>();
-        Vertex<T, N> temp = head;
+    public ArrayList<Vertex> getAllVertices() {
+        ArrayList<Vertex> list = new ArrayList<>();
+        Vertex temp = head;
         while (temp != null) {
             list.add(temp);
             temp = temp.nextVertex;
         }
         return list;
     }
-
-    //get vertex at specific index
-    public T getVertex(int pos) {
+    
+    //get student node at specific index and return as String
+    public String getStudentVertex(int pos) {
         if (pos > size - 1 || pos < 0) {
             return null;
         }
-        Vertex<T, N> temp = head;
+        Vertex temp = head;
         for (int i = 0; i < pos; i++) {
             temp = temp.nextVertex;
         }
         return temp.vertexInfo;
     }
-    
-    public String getStudentVertex(int pos) {
-        if (pos > size - 1 || pos < 0) {
-            return null;
-        }
-        Vertex<T, N> temp = head;
-        for (int i = 0; i < pos; i++) {
-            temp = temp.nextVertex;
-        }
-        return temp.vertexInfo.toString();
-    }
 
     //add a new edge from source to destination with a rep point
     //only source have a rep point while destination doesn't
-    public boolean addDirectedEdge(T source, T destination, N srcRep) { //1 -> 3 | 1's rep : 10
+    public boolean addDirectedEdge(String source, String destination, double srcRep) { //1 -> 3 | 1's rep : 10
         if (head == null) {
             return false;
         }
         if (!hasVertex(source) || !hasVertex(destination)) {
             return false;
         }
-        Vertex<T, N> sourceVertex = head;
+        Vertex sourceVertex = head;
         while (sourceVertex != null) {
             if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                Vertex<T, N> destinationVertex = head;
+                Vertex destinationVertex = head;
                 while (destinationVertex != null) {
                     if (destinationVertex.vertexInfo.compareTo(destination) == 0) {
-                        Edge<T, N> newEdge = new Edge<>(destinationVertex, srcRep, sourceVertex.firstEdge);
+                        Edge newEdge = new Edge(destinationVertex, srcRep, sourceVertex.firstEdge);
                         sourceVertex.firstEdge = newEdge;
                         sourceVertex.outdeg++;
                         destinationVertex.indeg++;
@@ -179,29 +168,29 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     //add undirected edge with rep point
     //srcName -> destName , srcName's rep point = srcRep
     //destName -> srcName , destName's rep point = destRep
-    public boolean addUndirectedEdge(T srcName, T destName, N srcRep, N destRep){ //1,7,3,4
+    public boolean addUndirectedEdge(String srcName, String destName, double srcRep, double destRep){ //1,7,3,4
         if(head == null){
             return false;
         }
         if(!hasVertex(srcName) || !hasVertex(destName)){
             return false;
         }
-        Vertex<T, N> sourceVertex = head;
+        Vertex sourceVertex = head;
         while (sourceVertex != null) {
             if (sourceVertex.vertexInfo.compareTo(srcName) == 0) {
-                Vertex<T, N> destinationVertex = head;
+                Vertex destinationVertex = head;
                 while (destinationVertex != null) {
                     if (destinationVertex.vertexInfo.compareTo(destName) == 0) {
-                        Edge<T, N> newSrcEdge = new Edge<>(destinationVertex, srcRep, sourceVertex.firstEdge);//1->7 , 1's rep : 3
-                        Edge<T, N> newDestEdge = new Edge<>(sourceVertex, destRep, destinationVertex.firstEdge);//7->1 , 7's rep : 4
+                        Edge newSrcEdge = new Edge(destinationVertex, srcRep, sourceVertex.firstEdge);
+                        Edge newDestEdge = new Edge(sourceVertex, destRep, destinationVertex.firstEdge);
                         sourceVertex.firstEdge = newSrcEdge; 
                         destinationVertex.firstEdge = newDestEdge;
                         sourceVertex.outdeg++;
                         sourceVertex.indeg++;
                         destinationVertex.indeg++;
                         destinationVertex.outdeg++; 
-                        sourceVertex.rep = srcRep; //1->7 , rep : 3
-                        destinationVertex.rep = destRep; //7->1 , rep : 4
+                        sourceVertex.rep = srcRep; 
+                        destinationVertex.rep = destRep;
                         return true;
                     }
                     destinationVertex = destinationVertex.nextVertex;
@@ -212,23 +201,21 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
         return false;
     }
     
-    public boolean addUndirectedEdge(T source, T destination, N w){
+    public boolean addUndirectedEdge(String source, String destination, double w){
         if (head == null) {
             return false;
         }
         if (!hasVertex(source) || !hasVertex(destination)) {
             return false;
         }
-        Vertex<T, N> sourceVertex = head;
+        Vertex sourceVertex = head;
         while (sourceVertex != null) {
             if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                // Reached source vertex, look for destination now
-                Vertex<T, N> destinationVertex = head;
+                Vertex destinationVertex = head;
                 while (destinationVertex != null) {
                     if (destinationVertex.vertexInfo.compareTo(destination) == 0) {
-                        // Reached destination vertex, add undirected edge here
-                        Edge<T, N> newSrcEdge = new Edge<>(destinationVertex, w, sourceVertex.firstEdge);
-                        Edge<T, N> newDestEdge = new Edge<>(sourceVertex, w, destinationVertex.firstEdge);
+                        Edge newSrcEdge = new Edge(destinationVertex, w, sourceVertex.firstEdge);
+                        Edge newDestEdge = new Edge(sourceVertex, w, destinationVertex.firstEdge);
                         sourceVertex.firstEdge = newSrcEdge; 
                         destinationVertex.firstEdge = newDestEdge;
                         sourceVertex.outdeg++;
@@ -245,22 +232,22 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
         return false;
     }
     
-    public boolean removeEdge(T source, T destination) {
+    public boolean removeEdge(String source, String destination) {
         if (head == null) {
             return false;
         } else if (!hasVertex(source) || !hasVertex(destination)) {
             return false;
         } else {
-            Vertex<T,N> sourceVertex = head;
+            Vertex sourceVertex = head;
             while (sourceVertex != null) {
                 if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                    Edge<T,N> currentEdge = sourceVertex.firstEdge;
-                    Edge<T,N> previousEdge = sourceVertex.firstEdge;
+                    Edge currentEdge = sourceVertex.firstEdge;
+                    Edge previousEdge = sourceVertex.firstEdge;
                     while (currentEdge != null) {
-                        if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) {
-                            if (currentEdge == sourceVertex.firstEdge) {   // when the edge is the first edge
+                        if (currentEdge.toVertex.vertexInfo.equals(destination)) {
+                            if (currentEdge == sourceVertex.firstEdge) {   
                                 sourceVertex.firstEdge = currentEdge.nextEdge;
-                            } else {  // when the edge is in the centre or at the last
+                            } else {  
                                 previousEdge.nextEdge = currentEdge.nextEdge;
                             }
                             currentEdge.nextEdge = null;
@@ -278,19 +265,19 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
     }
     
     //check whether there is a directed edge
-    public boolean hasDirectedEdge(T source, T destination) {
+    public boolean hasDirectedEdge(String source, String destination) {
         if (head == null) {
             return false;
         }
         if (!hasVertex(source) || !hasVertex(destination)) {
             return false;
         }
-        Vertex<T, N> sourceVertex = head;
+        Vertex sourceVertex = head;
         while (sourceVertex != null) {
-            if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                Edge<T, N> currentEdge = sourceVertex.firstEdge;
+            if (sourceVertex.vertexInfo.equals(source)) {
+                Edge currentEdge = sourceVertex.firstEdge;
                 while (currentEdge != null) {
-                    if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) // destination vertex found 
+                    if (currentEdge.toVertex.vertexInfo.equals(destination)) // destination vertex found 
                     {
                         return true;
                     }
@@ -302,21 +289,20 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
         return false;
     }
 
-    //retrieve the weight of an edge
-    public N getVertexRep(T source, T destination) {
-        N notFound = null;
+    //retrieve the vertex rep points of an edge
+    public double getVertexRep(String source, String destination) {
         if (head == null) {
-            return notFound;
+            return -1;
         }
         if (!hasVertex(source) || !hasVertex(destination)) {
-            return notFound;
+            return -1;
         }
-        Vertex<T, N> sourceVertex = head;
+        Vertex sourceVertex = head;
         while (sourceVertex != null) {
             if (sourceVertex.vertexInfo.compareTo(source) == 0) {
-                Edge<T, N> currentEdge = sourceVertex.firstEdge;
+                Edge currentEdge = sourceVertex.firstEdge;
                 while (currentEdge != null) {
-                    if (currentEdge.toVertex.vertexInfo.compareTo(destination) == 0) // destination vertex found 
+                    if (currentEdge.toVertex.vertexInfo.equals(destination)) // destination vertex found 
                     {
                         return currentEdge.fromVertexRep;
                     }
@@ -325,20 +311,44 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
             }
             sourceVertex = sourceVertex.nextVertex;
         }
-        return notFound;
+        return -1;
+    }
+    
+    //add rep points to existing edge 
+    public boolean addRepPoints(String source, String destination, double rep){
+        if(head == null){
+            return false;
+        }
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            return false;
+        }
+        Vertex sourceVertex = head;
+        while(sourceVertex != null){
+            if(sourceVertex.vertexInfo.equals(source)){
+                Edge currentEdge = sourceVertex.firstEdge;
+                while(currentEdge != null){
+                    if(currentEdge.toVertex.vertexInfo.equals(destination)){
+                        currentEdge.fromVertexRep = rep;
+                        return true;
+                    }
+                    currentEdge = currentEdge.nextEdge;
+                }
+            }
+            sourceVertex = sourceVertex.nextVertex;
+        }
+        return false;
     }
 
     //return all neighbours of a vertex to an arraylist
-    public ArrayList<T> getNeighbours(T v) {
+    public ArrayList<String> getNeighbours(String v) {
         if (!hasVertex(v)) {
             return null;
         }
-        ArrayList<T> list = new ArrayList<T>();
-        Vertex<T, N> temp = head;
+        ArrayList<String> list = new ArrayList();
+        Vertex temp = head;
         while (temp != null) {
             if (temp.vertexInfo.compareTo(v) == 0) {
-                // Reached vertex, look for destination now
-                Edge<T, N> currentEdge = temp.firstEdge;
+                Edge currentEdge = temp.firstEdge;
                 while (currentEdge != null) {
                     list.add(currentEdge.toVertex.vertexInfo);
                     currentEdge = currentEdge.nextEdge;
@@ -351,10 +361,10 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
 
     //print graph
     public void printEdges() {
-        Vertex<T, N> temp = head;
+        Vertex temp = head;
         while (temp != null) {
             System.out.print("# " + temp.vertexInfo + " --> ");
-            Edge<T, N> currentEdge = temp.firstEdge;
+            Edge currentEdge = temp.firstEdge;
             while (currentEdge != null) {
                 System.out.print("[" + currentEdge.toVertex.vertexInfo + "(rep:" + currentEdge.fromVertexRep + ")] ");
                 currentEdge = currentEdge.nextEdge;
@@ -363,5 +373,5 @@ public class Socialgraph<T extends Comparable<T>, N extends Comparable<N>> {
             temp = temp.nextVertex;
         }
     }
-
+    
 }
