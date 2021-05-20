@@ -33,7 +33,7 @@ public class Events {
             graph.addDirectedEdge(mentor, mentee, rep); 
             System.out.println("Mentor " + mentor + " programming skill is " + (rep == 10 ? "good" : "bad"));
             System.out.println("The learning experience is " + (rep == 10 ? "pleasant" : "unpleasant"));
-            System.out.println(mentor + " rep points relative to " + mentee + " is " + rep);
+            System.out.println(mentor + "'s rep points relative to " + mentee + " is " + rep);
             System.out.println("----------------------------------------------------\n");
             graph.printEdges();
             return true;
