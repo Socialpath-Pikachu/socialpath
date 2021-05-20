@@ -1,19 +1,19 @@
 package Socialpath;
 
-public class Edge <T extends Comparable<T>, N extends Comparable <N>> {
-    Vertex<T,N> srcVertex;
-    Vertex<T,N> toVertex;
-    N fromVertexRep;
-    Edge<T,N> nextEdge;
+public class Edge {
+    Vertex srcVertex;
+    Vertex toVertex;
+    double fromVertexRep;
+    Edge nextEdge;
 	
     public Edge(){
         srcVertex = null;
 	toVertex = null;
-	fromVertexRep = null;
+	fromVertexRep = 0;
 	nextEdge = null;
     }
 	
-    public Edge(Vertex<T,N> destination, N rep, Edge<T,N> a){
+    public Edge(Vertex destination, double rep, Edge a){
 	toVertex = destination;
         fromVertexRep = rep;
 	nextEdge = a;
