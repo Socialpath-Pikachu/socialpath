@@ -81,7 +81,7 @@ public class Socialgraph{
             }
             size++;
             return true;
-        } else //vertex alr exist 
+        } else 
         {
             return false;
         }
@@ -137,7 +137,7 @@ public class Socialgraph{
 
     //add a new edge from source to destination with a rep point
     //only source have a rep point while destination doesn't
-    public boolean addDirectedEdge(String source, String destination, double srcRep) { //1 -> 3 | 1's rep : 10
+    public boolean addDirectedEdge(String source, String destination, double srcRep) { 
         if (head == null) {
             return false;
         }
@@ -168,7 +168,7 @@ public class Socialgraph{
     //add undirected edge with rep point
     //srcName -> destName , srcName's rep point = srcRep
     //destName -> srcName , destName's rep point = destRep
-    public boolean addUndirectedEdge(String srcName, String destName, double srcRep, double destRep){ //1,7,3,4
+    public boolean addUndirectedEdge(String srcName, String destName, double srcRep, double destRep){
         if(head == null){
             return false;
         }
@@ -277,7 +277,7 @@ public class Socialgraph{
             if (sourceVertex.vertexInfo.equals(source)) {
                 Edge currentEdge = sourceVertex.firstEdge;
                 while (currentEdge != null) {
-                    if (currentEdge.toVertex.vertexInfo.equals(destination)) // destination vertex found 
+                    if (currentEdge.toVertex.vertexInfo.equals(destination)) 
                     {
                         return true;
                     }
@@ -302,7 +302,7 @@ public class Socialgraph{
             if (sourceVertex.vertexInfo.compareTo(source) == 0) {
                 Edge currentEdge = sourceVertex.firstEdge;
                 while (currentEdge != null) {
-                    if (currentEdge.toVertex.vertexInfo.equals(destination)) // destination vertex found 
+                    if (currentEdge.toVertex.vertexInfo.equals(destination))  
                     {
                         return currentEdge.fromVertexRep;
                     }
