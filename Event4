@@ -22,7 +22,7 @@ public class Event4 {
             stack1.push(digit);
         }
         while (true) {
-            //int stack1size = stack1.size();
+            int stack1size = stack1.size();
             while (!stack1.isEmpty()) {
                 a = stack1.pop();
                 b = 0;// for last element of stack1
@@ -37,7 +37,7 @@ public class Event4 {
 
             }
             //if size of stack1 = size of stack2, it means height is in non-increasing order already
-            if (stack1.size() == stack2.size()) {
+            if (stack1size == stack2.size()) {
                 break;
             }
             //pushback height of books into stack1 as need measure the size of stacks
