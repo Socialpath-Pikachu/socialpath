@@ -1,0 +1,56 @@
+package sociopath;
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Event4 {
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        //create 2 stacks
+        Stack<Integer> stack1 = new Stack<>();
+        Stack<Integer> stack2 = new Stack<>();
+        //initialize a, b and count
+        int a;
+        int b;
+        int round = 0;
+        //input total amount of books
+        System.out.println("How many books there?");
+        int N = s.nextInt();
+        //input height of N books
+        System.out.println("Please input the height of the books.");
+        for (int i = 0; i < N; i++) {
+            int digit = s.nextInt();
+            stack1.push(digit);
+        }
+        while (true) {
+            int stack1size = stack1.size();
+            while (!stack1.isEmpty()) {
+                a = stack1.pop();
+                b = 0;// for last element of stack1
+                //except for last element in stack1
+                if (!stack1.isEmpty()) {
+                    b = stack1.peek();
+                }
+                //if a<b, push the number into stack2
+                if (a < b || stack1.isEmpty()) {
+                    stack2.push(a);
+                }
+
+            }
+            //if size of stack1 = size of stack2, it means height is in non-increasing order already
+            if (stack1size == stack2.size()) {
+                break;
+            }
+            //pushback height of books into stack1 as need measure the size of stacks
+            while (!stack2.isEmpty()) {
+                stack1.push(stack2.pop());
+            }
+            //increment round
+            round++;
+
+        }
+        System.out.println("Rounds needed to make the height in non-increasing order: " + round);
+
+    }
+}
