@@ -22,6 +22,7 @@ public class Event4 {
             stack1.push(digit);
         }
         while (true) {
+            //need initialize stack1size bc if directly use stack1.size() the size will decrease
             int stack1size = stack1.size();
             while (!stack1.isEmpty()) {
                 a = stack1.pop();
