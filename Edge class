@@ -11,6 +11,11 @@ public class Edge {
 	nextEdge = null;
     }
 	
+    public Edge(Vertex destination, Edge a){
+	toVertex = destination;
+	nextEdge = a;
+    }
+    
     public Edge(Vertex destination, double rep, Edge a){
 	toVertex = destination;
         fromVertexRep = rep;
