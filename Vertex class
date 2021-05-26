@@ -1,7 +1,7 @@
 package Socialpath;
 
 public class Vertex {
-    String vertexInfo;
+    int vertexInfo;
     int indeg;
     int outdeg;
     double rep;
@@ -9,7 +9,7 @@ public class Vertex {
     Edge firstEdge;
 
     public Vertex() {
-        vertexInfo = null;
+        vertexInfo = 0;
         indeg = 0;
         outdeg = 0;
         rep = 0;
@@ -17,7 +17,7 @@ public class Vertex {
         firstEdge = null;
     }
 
-    public Vertex(String vInfo, Vertex next) {
+    public Vertex(int vInfo, Vertex next) {
         vertexInfo = vInfo;
         indeg = 0;
         outdeg = 0;
