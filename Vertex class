@@ -1,7 +1,8 @@
-package Socialpath;
-
 public class Vertex {
-    int vertexInfo;
+    String vertexInfo;
+    int dive;
+    int lunchStart;
+    int lunchPeriod;
     int indeg;
     int outdeg;
     double rep;
@@ -9,7 +10,10 @@ public class Vertex {
     Edge firstEdge;
 
     public Vertex() {
-        vertexInfo = 0;
+        vertexInfo = null;
+        lunchStart=0;
+        lunchPeriod=0;
+        dive=0;
         indeg = 0;
         outdeg = 0;
         rep = 0;
@@ -17,7 +21,7 @@ public class Vertex {
         firstEdge = null;
     }
 
-    public Vertex(int vInfo, Vertex next) {
+    public Vertex(String vInfo, Vertex next) {
         vertexInfo = vInfo;
         indeg = 0;
         outdeg = 0;
@@ -25,4 +29,17 @@ public class Vertex {
         nextVertex = next;
         firstEdge = null;
     }
+
+    public Vertex(String vertexInfo, int dive, int lunchStart, int lunchPeriod, Vertex nextVertex) {
+        this.vertexInfo = vertexInfo;
+        this.dive = dive;
+        this.lunchStart = lunchStart;
+        this.lunchPeriod = lunchPeriod;
+        this.nextVertex = nextVertex;
+        indeg = 0;
+        outdeg = 0;
+        rep = 0;
+        firstEdge = null;
+    }
+
 }
