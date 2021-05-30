@@ -59,7 +59,7 @@ public class Students {
             int noOfNewFriends= rand.nextInt(10-i);// generate the number for new friends
             
             for (int j=0; j<noOfNewFriends; j++){
-                int F_index= rand.nextInt(10-i-j)+i;
+                int F_index= rand.nextInt(9-i-j)+i;
                 String friend= students.get(F_index);
                 double repPtoF= rand.nextInt(10)+1; //rep point of person to friend
                 double repFtoP= rand.nextInt(10)+1; //rep point of friend to person
