@@ -43,8 +43,33 @@ public class Students {
             int chosenNameIndex= rand.nextInt(choice); //generate the index of the name
             String Name= name.get(chosenNameIndex); //get the genereated name
             int dive= rand.nextInt(101); //generate diving rate
-            int lunchStart= rand.nextInt(1400-1100+1)+1100; //generate lunch starting time
-            int lunchPeriod=rand.nextInt(60-5+1)+5; //generate lucnch period
+            int hour=rand.nextInt(14-11)+11;//generate the hour of taking lunch
+            int min, lunchPeriod;
+            String lunch;
+            
+            //generate the minute of having lunch
+            if (hour!=13){
+                min=rand.nextInt(60);
+            }
+            else{
+                min=rand.nextInt(56);
+            }
+            if (min<10){
+                lunch=hour+"0"+min;
+            }
+            else{
+                lunch=hour+""+min;
+            }
+            
+            int lunchStart= Integer.parseInt(lunch);
+
+            //generate lunch period
+            if (hour!=13){
+                lunchPeriod=rand.nextInt(60-5+1)+5; 
+            }
+            else{
+                lunchPeriod=rand.nextInt(60-5-min+1)+5;
+            }
             graph.addVertex(Name, dive, lunchStart, lunchPeriod); //add the info to the vertex
             name.remove(chosenNameIndex); //remove the chosen name
         }
