@@ -1,0 +1,280 @@
+package Socialpath;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Event123 {
+
+    static Scanner s = new Scanner(System.in);
+    static double rep;
+    
+    public static void main(String[] args) {
+        Socialgraph graph = addToGraph();
+        graph.printEdges();
+        event1(1,3,graph);
+        event2(1,3,graph);
+        event3(graph);
+    }
+    
+    public static boolean event1 (int mentor, int mentee, Socialgraph graph){
+        System.out.println("\n----------------------------------------------------");
+        System.out.println("Event 1 : Teaching a stranger to solve lab qustions");
+        boolean isFriendOf = graph.hasDirectedEdge(mentor, mentee) || graph.hasDirectedEdge(mentee, mentor); //check whether mentor & mentee are friends
+        if(!isFriendOf){
+            System.out.println("Mentor " + mentor + " is helping mentee " + mentee + " to solve lab questions");
+            System.out.println("Teaching lab questions now...\n");
+            
+            rep = (Math.random() > 0.5) ? 10 : 2;
+            graph.addDirectedEdge(mentor, mentee, rep); 
+            System.out.println("Mentor " + mentor + " programming skill is " + (rep == 10 ? "good" : "bad"));
+            System.out.println("The learning experience is " + (rep == 10 ? "pleasant" : "unpleasant"));
+            System.out.println(mentor + "'s rep points relative to " + mentee + " is " + rep);
+            System.out.println("----------------------------------------------------\n");
+            graph.printEdges();
+            return true;
+        }
+        else{
+            System.out.println("They are friends. Unable to teach a friend.");
+            return false;
+        }
+    }
+    
+    public static boolean event2(int mentor, int mentee, Socialgraph graph){
+        System.out.println("\n----------------------------------------------------");
+        System.out.println("Event 2 : Chit-chat");
+        System.out.println("Please decide who to chit-chat with mentee " + mentee + " : ");
+        int person = s.nextInt();
+        System.out.println("");
+        if (person != mentor && person != mentee) { 
+            boolean isFriendOfMentee = graph.hasDirectedEdge(mentee, person) || graph.hasDirectedEdge(person, mentee);//mentee : 3 ; person : 2
+            boolean isFriendOfMentor = graph.hasDirectedEdge(mentor, person) || graph.hasDirectedEdge(person, mentor);//mentor : 1 ; person : 2
+            boolean good = Math.random() > 0.5;
+            
+            if (isFriendOfMentee && !isFriendOfMentor) { //the person is mentee's friend but not mentor friend
+                System.out.println("Mentee " + mentee + " is chit-chatting with his friend " + person);
+                System.out.println("Chit-chatting now...\n");
+                if (good) {
+                    rep *= 0.5;
+                    System.out.println(mentee + " and " + person + " are talking about " + mentor + "'s good side");
+                } else {
+                    rep *= -1;
+                    System.out.println(mentee + " and " + person + " are talking about " + mentor + "'s bad side");
+                }
+                graph.addDirectedEdge(mentor, person, rep);
+                System.out.println(mentor + "'s rep points relative to " + person + " is " + rep);
+                System.out.println("----------------------------------------------------\n");
+                graph.printEdges();
+                return true;
+            }
+            else if(isFriendOfMentee && isFriendOfMentor){ //the person is mentee's friend and also mentor friend
+                System.out.println("Mentee " + mentee + " is chit-chatting with his friend " + person);
+                System.out.println("The mentee's friend is friend of mentor");
+                System.out.println("Chit-chatting now...\n");
+                double points = graph.getVertexRep(mentor, person);
+                if (good){
+                    rep = (rep*0.5) + points;
+                    System.out.println(mentee + " and " + person + " are talking about " + mentor + "'s good side");
+                } else {
+                    rep = (rep*-1) + points;
+                    System.out.println(mentee + " and " + person + " are talking about " + mentor + "'s bad side");
+                }
+                graph.addRepPoints(mentor, person, rep);
+                System.out.println(mentor + "'s rep points relative to " + person + " is " + rep);
+                System.out.println("----------------------------------------------------\n");
+                graph.printEdges();
+                return true;
+            }
+            else{
+                System.out.println(mentee + " and " + person + " are strangers. Unable to chit-chat.");
+                return false;
+            }
+        }
+        else{
+            System.out.println("Sorry! Mentee cannot chit-chat with mentor or himself");
+            return false;
+        }
+    }
+    
+    //event 3
+    static Random r = new Random();
+    static int[] lunchTime = new int[3];
+        
+    public static void event3(Socialgraph graph){
+        int min = 6;
+        int max = 59;
+        int lunchPeriod;
+        int averagePeriod = 0;
+        int[] lunchTimeList = {1100, 1115, 1130, 1145, 1200, 1215, 1230, 1245, 1300, 1315, 1330, 1345, 1400};
+        int lunchCount = 0;
+        
+        
+        System.out.println("\n------------------------------------------------------------------------");
+        System.out.println("Event 3 : Your road to glory");
+        
+        System.out.println("");
+        System.out.println("Who are you?");
+        int you = s.nextInt();
+        System.out.println("How many persons would you like to observe?");
+        int n= s.nextInt();
+        
+        System.out.println("Who are the " + n + " persons that you interested? ");
+        int[] interested = new int[n];
+        for(int i=0; i<n; i++){
+           int input = s.nextInt(); 
+           interested[i] = input;
+        }
+        
+        //2D array which stores every persons time intervals
+        int[][] intervals = new int[n+1][2];
+        
+        System.out.println("");
+        System.out.println("What time do you have lunch? [1100 to 1400]");
+        int lunchStart = s.nextInt();
+        System.out.println("How long is your lunch period? [6-59(minutes)]");
+        int period = s.nextInt();
+        
+        //calculate your lunch interval and store in 2D array as the first element
+        int lunchEnd = lunchStart + period;
+        int minutes = lunchEnd % 100;
+        int hour = lunchEnd / 100;
+        if(minutes >= 60) { //take the last 2 numbers (minutes)
+            minutes -= 60;
+            hour += 1;
+            lunchEnd = (hour*100) + minutes;
+        }
+        intervals[0][0] = lunchStart;
+        intervals[0][1] = lunchEnd;
+        System.out.println("Your lunch interval is " + intervals[0][0] + " to " + intervals[0][1]);
+        
+        for(int i=0; i<n; i++){
+            System.out.println("\n------------------------------");
+            System.out.println("Observing " + interested[i] + "...");
+            
+            for(int j=0; j<3; j++){ //observe for 3 days
+                lunchPeriod = r.nextInt(max - min) + min;
+                lunchTime[j] = lunchTimeList[r.nextInt(13)];
+            
+                System.out.println("Day " + (j+1));
+                System.out.println("Lunch time : " + lunchTime[j]);
+                System.out.println("Lunch period [minute(s)] : " + lunchPeriod);
+                System.out.println("");
+            
+                averagePeriod += lunchPeriod;
+            }
+            
+            averagePeriod /= 3;
+            System.out.println("Average lunch period : " + averagePeriod);
+            computeLunchInterval(averagePeriod, n, intervals);
+            System.out.println("");
+            
+            if(findIntersection(intervals, n)){ //intersection exist
+                System.out.println("There exists intersection between you and " + + interested[i]);
+                System.out.println("Congratulations! You will have lunch with " + interested[i]);
+                System.out.println("Having lunch...");
+                System.out.println("");
+                
+                if (graph.hasDirectedEdge(you, interested[i]) && graph.hasDirectedEdge(interested[i], you)){ //they are friends alr
+                    graph.addRepPoints(you, interested[i], rep+1); //your rep++
+                    graph.addRepPoints(interested[i], you, rep+1); //your friend's rep ++
+                }
+                else if (graph.hasDirectedEdge(you, interested[i])){ //after having lunch, both of them are friend
+                    graph.addRepPoints(you, interested[i], rep+1);
+                    graph.addDirectedEdge(interested[i], you, 1.0); //become friends 
+                }
+                else if (graph.hasDirectedEdge(interested[i], you)){ //after having lunch, both of them are friend
+                    graph.addDirectedEdge(you, interested[i], 1.0);  //become friends 
+                    graph.addRepPoints(interested[i], you, rep+1);
+                }
+                else{ //they are not friends before this
+                    graph.addUndirectedEdge(you, interested[i], 1.0, 1.0);
+                }
+                System.out.println("Your rep point with " + interested[i] + " is increased by 1");
+                System.out.println(interested[i] + "'s rep point with you is increased by 1");
+                lunchCount++;
+            }
+            else{
+                System.out.println("No intersection between you and " + interested[i]);
+                System.out.println("Unfortunately you can't have lunch with " + interested[i]);
+            }
+            System.out.println("------------------------------");
+            averagePeriod = 0; //set the averagePeriod to 0
+        }
+        
+        System.out.println("You will have lunch with " + lunchCount + " person(s) in day 4");
+        System.out.println("The maximum reputation you have gained were " + lunchCount);
+        System.out.println("");
+        
+        graph.printEdges();
+    }
+    
+    //get the earliest time -> average lunch time
+    public static void computeLunchInterval(int averagePeriod, int n, int[][] intervals) {
+        int startTime = 1100;
+        
+        //start time is the earliest time
+        if (lunchTime[0] > lunchTime[1]) {
+            startTime = Math.min(lunchTime[1], lunchTime[2]);
+        } else if (lunchTime[1] > lunchTime[0]) {
+            startTime = Math.min(lunchTime[0], lunchTime[2]);
+        }
+        
+        int endTime = startTime + averagePeriod;
+        int minutes = endTime % 100;
+        int hour = endTime / 100;
+        if(minutes >= 60) { //take the last 2 numbers (minutes)
+            minutes -= 60;
+            hour += 1;
+            endTime = (hour*100) + minutes;
+        }
+        System.out.println("Lunch interval : " + startTime + " to " + endTime);
+        
+        //store start time and end time in 2D array
+        for(int i=1; i<n+1; i++){
+            intervals[i][0] = startTime;
+            intervals[i][1] = endTime;
+        }
+    }
+    
+    public static boolean findIntersection(int[][] intervals, int n){
+        //your lunch intervals
+        int l = intervals[0][0]; //your lunch start
+        int r = intervals[0][1]; //your lunch end
+        
+        for(int i=1; i<n+1; i++){
+            if (intervals[i][0] > r || intervals[i][1] < l) {// If no intersection exists
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static Socialgraph addToGraph(){
+        Socialgraph graph = new Socialgraph();
+        Integer[] students = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        for(Integer student : students){
+            graph.addVertex(student);
+        }
+        //srcName, destName, srcRep, destRep
+        graph.addUndirectedEdge(1, 7, 3.0, 4.0);
+        graph.addUndirectedEdge(1, 2, 8.0, 5.0);
+        graph.addUndirectedEdge(2, 3, 4.0, 5.0);
+        graph.addUndirectedEdge(2, 5, 2.0, 6.0);
+        graph.addUndirectedEdge(2, 6, 7.0, 9.0);
+        graph.addUndirectedEdge(4, 8, 10.0, 7.0);
+        graph.addUndirectedEdge(4, 10, 7.0, 7.0);
+        graph.addUndirectedEdge(9, 10, 6.0, 5.0);
+        
+        System.out.print("# List of all students : [");
+        ArrayList<Integer> studentsList = graph.getAllStudents();
+        for(int i=0; i<studentsList.size()-1; i++){
+            System.out.print(studentsList.get(i) + ", ");
+        }
+        System.out.println(studentsList.get(studentsList.size()-1) + "]");
+        System.out.println("");
+        return graph;
+    }
+}
