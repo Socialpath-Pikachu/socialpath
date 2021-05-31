@@ -88,10 +88,10 @@ public class Socialgraph{
         }
     }
     
-    public boolean addVertex(String name, int dive, int lunchStart, int lunchPeriod){
+    public boolean addVertex(String name, int dive){
         if (hasVertex(name) == false) { //the vertex is not in the graph
             Vertex temp = head;
-            Vertex newVertex = new Vertex(name, dive, lunchStart, lunchPeriod, null);
+            Vertex newVertex = new Vertex(name, dive, null);
             if (head == null) {
                 head = newVertex;
             } else {
