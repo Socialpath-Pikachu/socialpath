@@ -1,8 +1,6 @@
 public class Vertex {
     String vertexInfo;
     int dive;
-    int lunchStart;
-    int lunchPeriod;
     int indeg;
     int outdeg;
     double rep;
@@ -11,8 +9,6 @@ public class Vertex {
 
     public Vertex() {
         vertexInfo = null;
-        lunchStart=0;
-        lunchPeriod=0;
         dive=0;
         indeg = 0;
         outdeg = 0;
@@ -30,11 +26,9 @@ public class Vertex {
         firstEdge = null;
     }
 
-    public Vertex(String vertexInfo, int dive, int lunchStart, int lunchPeriod, Vertex nextVertex) {
+    public Vertex(String vertexInfo, int dive, Vertex nextVertex) {
         this.vertexInfo = vertexInfo;
         this.dive = dive;
-        this.lunchStart = lunchStart;
-        this.lunchPeriod = lunchPeriod;
         this.nextVertex = nextVertex;
         indeg = 0;
         outdeg = 0;
