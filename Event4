@@ -19,6 +19,7 @@ public class Event4 {
         System.out.println("Please input the height of the books.");
         for (int i = 0; i < N; i++) {
             int digit = s.nextInt();
+            s.nextLine();
             stack1.push(digit);
         }
         while (true) {
