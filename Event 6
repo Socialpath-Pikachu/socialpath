@@ -1,0 +1,88 @@
+package socialpath;
+
+import java.util.*;
+
+class Graph {
+
+    // No. of vertices
+    private static int V;
+
+    // Array of lists for Adjacency List
+    private ArrayList<Integer>[] adj;
+
+    @SuppressWarnings("unchecked")
+    Graph(int v)
+    {
+        V = v;
+        adj = new ArrayList[v];
+        for (int i = 0; i < v; ++i){
+            adj[i] = new ArrayList<>();
+        }
+    }
+
+    // Method to add an edge into the undirected graph
+    public void addEdge(int v, int w)
+    {
+        adj[v].add(w);
+        adj[w].add(v);
+    }
+
+    // A recursive method to count
+    // all paths from 's' (source) to 'd' (Destination).
+   public int countUtil(int s, int d, int start, int loop,int pathCount, ArrayList<Integer> path) {
+        // Stops recursive call when
+        // Loop reaches vertex number OR Current vertex equals Starting vertex (disregarding first loop)
+        path.add(s);
+      if ( (loop != 0 && s == start ) || loop == V) {
+            return pathCount;
+        }
+        loop ++;
+        // If current vertex is same as destination, then increment count
+        if (s == d) {
+            pathCount++;
+        }
+        // Recur for all the vertices adjacent to this vertex
+        else {
+            Iterator<Integer> it = adj[s].listIterator();
+            while (it.hasNext()) {
+                int n = it.next();
+                pathCount = countUtil(n, d, start, loop, pathCount, path);
+            }
+        }
+        return pathCount;
+    }
+   
+    // Returns count of
+    // paths from 's' to 'd'
+    int countPaths(int s, int d)
+    {
+        int pathCount = 0;
+        ArrayList<Integer> path = new ArrayList<>();
+        pathCount = countUtil(s, d, pathCount, s, 0, path);
+        return pathCount;
+    }
+
+    // Driver Code
+    public static void main(String args[])
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Number of Vertices : ");
+        int n = sc.nextInt();
+        Graph g = new Graph(n);
+
+        for (int i = 0; i < n; i++) {
+            int v = sc.nextInt() - 1;
+            int w = sc.nextInt() - 1;
+            g.addEdge(v, w);
+        }
+
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                sum += g.countPaths(i, j);
+            }
+        }
+        System.out.println("Total number of unique ways : " + sum);
+      
+    }
+}
