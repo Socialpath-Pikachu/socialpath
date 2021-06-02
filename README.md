@@ -1,5 +1,5 @@
-For event 5, we need to add dependency in pom.xml file which locates in Project Files
-Add in between </properties> and </project>
+For event 5, we need to add dependency in pom.xml file which locates in Project Files.
+Add in between </properties> and </project>.
 Here's the code :
 <dependencies>
         <dependency>
