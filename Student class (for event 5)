@@ -1,0 +1,38 @@
+package Socialpath;
+
+import java.util.ArrayList;
+
+public class Student {
+    int person;
+    ArrayList<Student> friends; // friends
+    int numberOfDaysToKnow;
+
+    public Student() {
+    }
+
+    public Student(int person) {
+        this.person = person;
+        friends = new ArrayList<>();
+    }
+
+    //add undirected edge btw 2 people
+    public void addEdge(Student s) {
+        this.friends.add(s);
+        s.friends.add(this);
+    }
+
+    public int getPersonID() {
+        return person;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getPersonID());
+        sb.append(" --> ");
+        for (int i = 0; i < friends.size(); i++) {
+            sb.append(friends.get(i).getPersonID()).append(" ");
+        }
+        return sb.toString();
+    }
+}
