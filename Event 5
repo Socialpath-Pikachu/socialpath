@@ -1,0 +1,395 @@
+package Socialpath;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Scanner;
+import org.jgrapht.alg.util.Pair;
+
+public class Event5 {
+    
+    static Student[] students;
+    static Scanner s = new Scanner(System.in);
+    static StringBuilder sb = new StringBuilder();
+    static ArrayList<Integer> rumorPropagatesPerDay = new ArrayList();
+    static ArrayList<Pair<Student, Integer>> possibleSpreader = new ArrayList<>(); 
+    static boolean multipleDaysCase = false;
+    
+    static boolean[] vis = new boolean[10];
+    static ArrayList<Integer> spreaderCluster = new ArrayList();
+    static ArrayList<Integer> crushCluster = new ArrayList();
+    
+    public static void main(String[] args) {
+        System.out.println("\n------------------------------------------------------------------------");
+        System.out.println("Event 5 : Meet your crush\n");
+        
+        //create a graph
+        addToGraph(10);
+        System.out.println("");
+        
+        //create new relationship
+        System.out.println("Would you like to add new relationship? [yes / no]");
+        if(s.next().equalsIgnoreCase("yes")){
+            System.out.println("How many new relationship would you like to create?");
+            int input = s.nextInt();
+            for(int i=input; i>0; i--){
+                System.out.println("Please enter " + i + " rows of students [each row with 2 students] : ");
+                int from = s.nextInt();
+                int to = s.nextInt();
+                makeNewConnection(from, to);
+            }  
+        }
+
+        System.out.println("Enter the spreader follow by your crush : ");
+        int spreaderID = s.nextInt();
+        int crushID = s.nextInt();
+        System.out.println("");
+        
+        boolean[] visited = new boolean[10];
+        Student spreader = students[spreaderID - 1];
+        Student myCrush = students[crushID - 1];
+        Socialgraph graph = new Socialgraph();
+
+        System.out.println("Checking...\n");
+
+        separateCluster(spreader);
+        
+        if (isConnected(spreader)) { //connected graph
+            if(!first3Conditions(spreader, myCrush)){
+                DFS(spreader, myCrush, 0, visited);
+                stopSpreader(spreader, possibleSpreader);
+                System.out.println("");
+                if(!multipleDaysCase){
+                    BFS(spreader, myCrush, visited, rumorPropagatesPerDay, graph);
+                }
+                else{
+                    multipleDaysRumorPropagation(spreader, possibleSpreader);
+                    
+                }
+            }
+        }
+        else { //disconnected graph
+            if (spreaderCluster.contains(spreader.getPersonID()) && crushCluster.contains(myCrush.getPersonID())) {
+                sb.append("My crush and the spreader have no connection")
+                        .append("\nMy crush will never know the rumor");
+                System.out.println(sb);
+                System.out.println("\nThe total number of students will know the rumor are " + spreaderCluster.size());
+            }
+            else if(!first3Conditions(spreader, myCrush)){
+                DFS(spreader, myCrush, 0, visited);
+                stopSpreader(spreader, possibleSpreader);
+                System.out.println("");
+            }
+        }
+        
+        System.out.println("------------------------------------------------------------------------");
+        
+    }
+
+    //method to get rumor propagation at one jump per day
+    public static void BFS(Student spreader, Student myCrush, boolean[] visited, List<Integer> propagatesPerDay, Socialgraph graph) {
+        Queue<Student> queue = new LinkedList<>(); //queue which stores all the visited students
+        Queue<Student> bfs = new LinkedList<>(); //another queue to store visited person to check that visited person's friends
+        
+        int day = 1;
+        int i = 0; //list index
+        int count = 0;
+        ArrayList<Integer> list = new ArrayList(); //list which stores the rumor propagates per day 
+                                                   //and also includes the previous level rumor propagates per day 
+        
+        queue.add(spreader); 
+        visited[spreader.getPersonID() - 1] = true;
+
+        while (!queue.isEmpty()) {
+            System.out.println("Day " + day);
+            propagatesPerDay.add(queue.size());
+
+            while (!queue.isEmpty()) {
+                Student current = queue.poll(); 
+                System.out.println(current + " "); //print the visited person with his friends
+                bfs.add(current); //add spreader and his friends
+                count += current.friends.size();
+            }
+            
+            list.add(count);
+            if(i>0){ //starting from the next day...
+                System.out.println("The rumor propagates at one jump is " + (list.get(i)-list.get(i-1)));
+            }
+            else{ //first day
+                System.out.println("The rumor propagates at one jump is " + list.get(0));
+            }
+            i++;
+            System.out.println("");
+            count = 0; //reset count to 0
+
+            while (!bfs.isEmpty()) {
+                for (Student student : bfs.poll().friends) { //spreader's friends
+                    if (student.equals(myCrush) && !multipleDaysCase) { //false
+                        System.out.println("The rumor will spread to my crush " + myCrush.getPersonID() 
+                                            + " on day " + day);
+                        return;
+                    }
+                    if (!visited[student.getPersonID() - 1]) {
+                        queue.add(student);
+                        visited[student.getPersonID() - 1] = true;
+                    }
+                }
+            }
+            day++;
+        }
+    }
+      
+    //method to check if i am able to stop the spreader
+    public static void stopSpreader(Student spreader, List<Pair<Student, Integer>> list){
+        Student student = list.get(0).getFirst(); 
+        int count = 0;
+        
+        for (int i=0; i<list.size(); i++) {
+            if (list.get(i).getFirst().equals(student)) {
+                count++;
+            }
+        }
+
+        // to check if only one person would tell my crush
+        if (count == list.size()) {
+            sb.append("There is only one student who will spread the rumor to my crush ")
+                    .append("\nI will have teatime with ")
+                    .append(student.getPersonID())
+                    .append(" to stop the rumor")
+                    .append("\nHaving teatime...")
+                    .append("\n\nCongratulations! You have convinced the spreader(s) successfully ^O^");
+            System.out.println(sb);
+            return;
+        }
+
+        int maxDays = list.get(0).getSecond();
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i).getSecond() > maxDays) {
+                maxDays = list.get(i).getSecond();
+            }
+        }
+        
+        boolean[] heard = new boolean[11];
+        int numberOfPeopleHeard = 0;
+        for(int i=0; i<list.size(); i++){
+            if(!heard[list.get(i).getFirst().getPersonID()]){
+                heard[list.get(i).getFirst().getPersonID()] = true;
+                numberOfPeopleHeard++;
+            }
+        }
+
+        if (numberOfPeopleHeard > maxDays) {   // list.size == number of friends my crush has
+            sb.append("There are more than one person that will spread the rumor to my crush on the next day")
+                .append("\nFail to convinced the spreader(s) T^T");
+            System.out.println(sb);
+            System.out.print("Those people are ");
+            for(int i =0; i<list.size()-1; i++){
+                System.out.print(list.get(i).getFirst().getPersonID() + ", ");
+            }
+            System.out.print(list.get(list.size()-1).getFirst().getPersonID());
+            System.out.println("");
+        } 
+        else { //multiple days case
+            sb.append("There are 2 persons which will spread the rumor to my crush on different days")
+                .append("\nI will have teatime with different persons on different days")
+                .append("\nHaving teatime...")
+                .append("\n\nCongratulations! You have convinced the spreader(s) successfully ^O^");
+            System.out.println(sb);
+            
+            multipleDaysCase = true;
+        }
+        
+    } 
+    
+    //method to calculate rumor propagation for multiple days case
+    public static void multipleDaysRumorPropagation(Student spreader, List<Pair<Student, Integer>> list){
+        int firstPerson = 0;
+        Student secondPersonFriends = spreader;
+        int secondPersonFriendsSize = 0;
+        int secondPerson = 0;
+        int dayToKnow = 0;
+        
+        if(multipleDaysCase){
+            for(int i=0; i<list.size(); i++){
+                if(list.get(i).getSecond() == 1){
+                    firstPerson = list.get(i).getFirst().getPersonID();
+                }
+                
+                for(int j=0; j<spreader.friends.size(); j++){
+                    if(spreader.friends.get(j).getPersonID() != firstPerson && spreader.friends.get(j).friends.size() > 1){
+                        secondPersonFriends = spreader.friends.get(j);
+                        secondPersonFriendsSize = spreader.friends.get(j).friends.size() - 1; //exclude spreader himself
+                    }
+                }
+                
+                if(list.get(i).getSecond() == 2){
+                    dayToKnow = 2;
+                    secondPerson = list.get(i).getFirst().getPersonID();
+                    print(spreader,firstPerson,secondPersonFriends,secondPersonFriendsSize,secondPerson,dayToKnow);
+                    return;
+                }
+                else if(list.get(i).getSecond() > 2){
+                    dayToKnow = list.get(i).getSecond();
+                    secondPerson = list.get(i).getFirst().getPersonID();
+                    print(spreader,firstPerson,secondPersonFriends,secondPersonFriendsSize,secondPerson,dayToKnow);
+                    return;
+                }
+            }
+        }
+    }
+    
+    //method to print rumor propagation after we get the earliest spreader
+    public static void print(Student spreader, int firstPerson, Student secondPersonFriends, int secondPersonFriendsSize, int secondPerson, int dayToKnow) {
+        int rumor = spreader.friends.size();
+        System.out.println("Day 1\n" + spreader + "\nThe rumor propagates at one jump is " + rumor);
+        System.out.println("I convinced " + firstPerson + " on day 1");
+        System.out.println("");
+
+        System.out.println("Day 2\n" + secondPersonFriends + "\nThe rumor propagates at one jump is " + secondPersonFriendsSize);
+        System.out.println("I convinced " + secondPerson + (dayToKnow == 2 ? " on day 2" : (" on day " + dayToKnow)));
+    }
+    
+    //method to check all possible paths of spreading
+    public static void DFS(Student spreader, Student myCrush, int numberOfDays, boolean[] visited){ 
+        visited[spreader.getPersonID() - 1] = true; 
+        spreader.numberOfDaysToKnow = numberOfDays; 
+        
+        if(spreaderIsFriendOfCrush(spreader, myCrush)){ 
+            spreader.numberOfDaysToKnow = numberOfDays;
+            possibleSpreader.add(new Pair<>(spreader, spreader.numberOfDaysToKnow));
+        }
+        
+        for (Student current : spreader.friends) { //6 -> 2 3
+            if (!visited[current.getPersonID() - 1] && !current.equals(myCrush)) { //visited[5]=false && 6!=8
+                numberOfDays++; 
+                DFS(current, myCrush, numberOfDays, visited);
+                numberOfDays--;
+                visited[current.getPersonID() - 1] = false; // to ensure I could have other possible paths to crush
+            }
+        }
+    }
+    
+    //dfs algorithm used to check whether the graph is connected
+    public static void dfsConnected(Student spreader){
+        vis[spreader.getPersonID() - 1] = true;
+        
+        for(Student student : spreader.friends){
+            if(!vis[student.getPersonID() - 1]){
+                dfsConnected(student);
+            }
+        }
+    }
+    
+    //method to check whether the graph is connected 
+    public static boolean isConnected(Student spreader){
+        dfsConnected(spreader);
+        
+        for(Student student : students){
+            if(!vis[student.getPersonID() - 1]){ //found disconnected person
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean first3Conditions(Student spreader, Student myCrush){
+        int rumorPropagatesOnDay1 = spreader.friends.size();
+        
+        //if spreader is one of the friend of crush
+        if(spreaderIsFriendOfCrush(spreader, myCrush)){ 
+            sb.append("The spreader is my crush's friend")
+                    .append("\nMy crush will definitely know the rumor on day 1")
+                    .append("\nFail to convinced the spreader(s) T^T");
+            System.out.println(sb);
+            System.out.println("\nThe rumor propagates at one jump on day 1 is " + rumorPropagatesOnDay1);
+            return true;
+        }
+        
+        //if spreader has only 1 friend
+        else if(spreader.friends.size() == 1){ 
+            sb.append("The spreader has only 1 friend")
+                    .append("\nI will have teatime with the spreader's friend ")
+                    .append(spreader.friends.get(0).getPersonID())
+                    .append(" to stop the rumor")
+                    .append("\nHaving teatime...")
+                    .append("\n\nCongratulations! You have convinced the spreader(s) successfully ^O^");
+            System.out.println(sb);
+            System.out.println("\nThe rumor propagates at one jump on day 1 is " + rumorPropagatesOnDay1);
+            return true;
+        }
+        
+        //if my crush has only 1 friend and the friend is not the spreader
+        else if(myCrush.friends.size() == 1 && !myCrush.friends.get(0).equals(spreader)){ 
+            sb.append("My crush has only 1 friend and that friend is not the spreader")
+                    .append("\nI will have teatime with my crush's friend ")
+                    .append(myCrush.friends.get(0).getPersonID())
+                    .append(" to stop the rumor")
+                    .append("\nHaving teatime...")
+                    .append("\n\nCongratulations! You have convinced the spreader(s) successfully ^O^");
+            System.out.println(sb);
+            System.out.println("\nThe rumor propagates at one jump on day 1 is " + rumorPropagatesOnDay1);
+            return true;
+        }
+        
+        return false;
+        
+    }
+    
+    public static boolean spreaderIsFriendOfCrush(Student spreader, Student crush){
+        for (Student s : spreader.friends) {
+            if (s.equals(crush))
+                return true;
+        }
+        return false;
+    }
+    
+    //method to separate spreader cluster and crush cluster for disconnected graph
+    public static void separateCluster(Student spreader) {
+        if (!isConnected(spreader)) {
+            crushCluster.add(4);
+            crushCluster.add(8);
+            crushCluster.add(9);
+            crushCluster.add(10);
+            
+            spreaderCluster.add(1);
+            spreaderCluster.add(2);
+            spreaderCluster.add(3);
+            spreaderCluster.add(5);
+            spreaderCluster.add(6);
+            spreaderCluster.add(7);
+        }
+    }
+    
+    //method to ask user whether he want to create new relationship
+    public static void makeNewConnection(int spreaderID, int myCrushID){
+        System.out.println("");
+        if(spreaderID != 0 && myCrushID != 0){
+            students[spreaderID - 1].addEdge(students[myCrushID - 1]);
+        }
+        for(Student student : students){
+            System.out.println(student.toString());
+        }
+        System.out.println("");
+    }
+    
+    //add all nodes into students[]
+    public static void addToGraph(int numberOfStudent) {
+        students = new Student[numberOfStudent];
+        for (int i = 0; i < numberOfStudent; i++){
+            students[i] = new Student(i + 1);
+        }
+        students[0].addEdge(students[1]); // 1 - 2
+        students[0].addEdge(students[6]); // 1 - 7
+        students[1].addEdge(students[2]); // 2 - 3
+        students[1].addEdge(students[4]); // 2 - 5
+        students[1].addEdge(students[5]); // 2 - 6
+        students[3].addEdge(students[7]); // 4 - 8
+        students[3].addEdge(students[9]); // 4 - 10
+        students[8].addEdge(students[9]); // 9 - 10
+
+        for (Student s : students) {
+            System.out.println(s.toString());
+        }
+    }
+}
