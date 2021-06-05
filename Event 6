@@ -7,82 +7,96 @@ class Graph {
     // No. of vertices
     private static int V;
 
-    // Array of lists for Adjacency List
-    private ArrayList<Integer>[] adj;
+    // Array of lists for
+    // Adjacency List
+    // Representation
+    private LinkedList<Integer>[] adj;
+
+    private static ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     Graph(int v)
     {
         V = v;
-        adj = new ArrayList[v];
-        for (int i = 0; i < v; ++i){
-            adj[i] = new ArrayList<>();
-        }
+        adj = new LinkedList[v];
+        for (int i = 0; i < v; ++i)
+            adj[i] = new LinkedList<>();
     }
 
     // Method to add an edge into the undirected graph
-    public void addEdge(int v, int w)
+    void addEdge(int v, int w)
     {
         adj[v].add(w);
         adj[w].add(v);
     }
 
     // A recursive method to count
-    // all paths from 's' (source) to 'd' (Destination).
-   public int countUtil(int s, int d, int start, int loop,int pathCount, ArrayList<Integer> path) {
+    // all paths from 'u' (Initial point) to 'd' (Destination point).
+    int countPathsUtil(int u, int d, int pathCount, int start, int loop, ArrayList<Integer> path) {
         // Stops recursive call when
         // Loop reaches vertex number OR Current vertex equals Starting vertex (disregarding first loop)
-        path.add(s);
-      if ( (loop != 0 && s == start ) || loop == V) {
+        path.add(u);
+        if ( (loop != 0 && u == start ) || loop == V) {
+            if(!path.isEmpty()) path.remove(path.size()-1);
             return pathCount;
         }
         loop ++;
         // If current vertex is same as destination, then increment count
-        if (s == d) {
+        if (u == d) {
+            arr.add((ArrayList<Integer>) path.clone());
             pathCount++;
         }
         // Recur for all the vertices adjacent to this vertex
         else {
-            Iterator<Integer> it = adj[s].listIterator();
-            while (it.hasNext()) {
-                int n = it.next();
-                pathCount = countUtil(n, d, start, loop, pathCount, path);
+            Iterator<Integer> i = adj[u].listIterator();
+            while (i.hasNext()) {
+                int n = i.next();
+                pathCount = countPathsUtil(n, d, pathCount, start, loop, path);
             }
         }
+        if(!path.isEmpty()) path.remove(path.size()-1);
         return pathCount;
     }
-   
-    // Returns count of
-    // paths from 's' to 'd'
+
     int countPaths(int s, int d)
     {
         int pathCount = 0;
         ArrayList<Integer> path = new ArrayList<>();
-        pathCount = countUtil(s, d, pathCount, s, 0, path);
+        pathCount = countPathsUtil(s, d, pathCount, s, 0, path);
         return pathCount;
+    }
+
+  
+    
+    private static void display(ArrayList<ArrayList<Integer>> arr) {
+        for (int i = 0; i < arr.size(); i++) {
+                System.out.println(arr.get(i)+"  ");
+        }
+      
     }
 
     // Driver Code
     public static void main(String args[])
     {
-        Scanner sc = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         System.out.print("Number of Vertices : ");
-        int n = sc.nextInt();
+        int n = scanner.nextInt();
         Graph g = new Graph(n);
 
         for (int i = 0; i < n; i++) {
-            int v = sc.nextInt() - 1;
-            int w = sc.nextInt() - 1;
-            g.addEdge(v, w);
+            int num1 = scanner.nextInt() - 1;
+            int num2 = scanner.nextInt() - 1;
+            g.addEdge(num1, num2);
         }
 
         int sum = 0;
+
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 sum += g.countPaths(i, j);
             }
         }
-        System.out.println("Total number of unique ways : " + sum);
-      
+        System.out.println("Total number of paths : " + sum);
+       display(arr);
     }
 }
