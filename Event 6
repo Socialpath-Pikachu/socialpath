@@ -35,7 +35,7 @@ class Graph {
     int countPathsUtil(int u, int d, int pathCount, int start, int loop, ArrayList<Integer> path) {
         // Stops recursive call when
         // Loop reaches vertex number OR Current vertex equals Starting vertex (disregarding first loop)
-        path.add(u);
+        path.add(u+1);
         if ( (loop != 0 && u == start ) || loop == V) {
             if(!path.isEmpty()) path.remove(path.size()-1);
             return pathCount;
