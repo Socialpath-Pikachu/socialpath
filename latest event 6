@@ -1,0 +1,106 @@
+package socialpath;
+
+import java.util.*;
+
+class Graph {
+
+    // No. of vertices
+    private static int V;
+
+    // Array of lists for
+    // Adjacency List
+    // Representation
+    private LinkedList<Integer>[] adj;
+
+    private static ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
+
+    @SuppressWarnings("unchecked")
+    Graph(int v)
+    {
+        V = v;
+        adj = new LinkedList[v];
+        for (int i = 0; i < v; ++i)
+            adj[i] = new LinkedList<>();
+    }
+
+    // Method to add an edge into the undirected graph
+    void addEdge(int v, int w)
+    {
+        adj[v].add(w);
+        adj[w].add(v);
+    }
+
+    // A recursive method to count
+    // all paths from 'src' (Initial point) to 'd' (Destination point).
+    // count =path count
+    int countUtil(int src, int des, int count, int start, int loop, ArrayList<Integer> way) {
+        // Stops recursive call when
+        // Loop reaches vertex number OR Current vertex equals Starting vertex (disregarding first loop)
+        way.add(src+1);
+        if ( (loop != 0 && src == start ) || loop == V) {
+            if(!way.isEmpty()) 
+            way.remove(way.size()-1);
+            return count;
+        }
+        loop ++;
+        // If current vertex is same as destination, then increment count
+        if (src == des) {
+            arr.add((ArrayList<Integer>) way.clone());
+            count++;
+        }
+        // Recur for all the vertices adjacent to this vertex
+        else {
+            Iterator<Integer> i = adj[src].listIterator();
+            while (i.hasNext()) {
+                int n = i.next();
+                count = countUtil(n, des, count, start, loop, way);
+            }
+        }
+        if(!way.isEmpty())
+        way.remove(way.size()-1);
+        
+        return count;
+    }
+
+    int countPaths(int s, int d)
+    {
+        int count = 0;
+        ArrayList<Integer> path = new ArrayList<>();
+        count = countUtil(s, d, count, s, 0, path);
+        return count;
+    }
+
+  
+    
+    private static void display(ArrayList<ArrayList<Integer>> arr) {
+        for (int i = 0; i < arr.size(); i++) {
+                System.out.println(arr.get(i)+"  ");
+        }
+      
+    }
+
+    // Driver Code
+    public static void main(String args[])
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Number of Vertices : ");
+        int n = scanner.nextInt();
+        Graph g = new Graph(n);
+
+        for (int i = 0; i < n; i++) {
+            int num1 = scanner.nextInt() - 1;
+            int num2 = scanner.nextInt() - 1;
+            g.addEdge(num1, num2);
+        }
+
+        int sum = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                sum += g.countPaths(i, j);
+            }
+        }
+        System.out.println("Total number of paths : " + sum);
+       display(arr);
+    }
+}
