@@ -88,9 +88,9 @@ class Graph {
         Graph g = new Graph(n);
 
         for (int i = 0; i < n; i++) {
-            int num1 = scanner.nextInt() - 1;
-            int num2 = scanner.nextInt() - 1;
-            g.addEdge(num1, num2);
+            int v = scanner.nextInt() - 1;
+            int w = scanner.nextInt() - 1;
+            g.addEdge(v, w);
         }
 
         int sum = 0;
