@@ -100,7 +100,7 @@ class Graph {
                 sum += g.countPaths(i, j);
             }
         }
-        System.out.println("Total number of paths : " + sum);
+        System.out.println("Total number of unique ways : " + sum);
        display(arr);
     }
 }
