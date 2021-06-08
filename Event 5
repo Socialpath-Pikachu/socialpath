@@ -346,47 +346,63 @@ public class Event5 {
     //***condition where the person need to convince different persons on different day
     public static void multipleDaysRumorPropagation(Student spreader, List<Pair<Student, Integer>> list) {
         int firstPerson = 0;
-        Student secondPersonFriends = spreader;
+        ArrayList<Student> secondPersonFriend = new ArrayList<>();
         int secondPersonFriendsSize = 0;
         int secondPerson = 0;
         int dayToKnow = 0;
 
         if (multipleDaysCase) {
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getSecond() == 1) {
-                    firstPerson = list.get(i).getFirst().getPersonID();
+                if (list.get(i).getSecond() == 1) { //day 1
+                    firstPerson = list.get(i).getFirst().getPersonID(); 
                 }
-
-                for (int j = 0; j < spreader.friends.size(); j++) {
-                    if (spreader.friends.get(j).getPersonID() != firstPerson && spreader.friends.get(j).friends.size() > 1) {
-                        secondPersonFriends = spreader.friends.get(j);
-                        secondPersonFriendsSize = spreader.friends.get(j).friends.size() - 1; //exclude spreader himself
-                    }
-                }
-
+                
+                computeForDay2(spreader, firstPerson, secondPersonFriend);
+                int day2RumorPropagation = secondDayRumorPropagation(secondPersonFriend, secondPersonFriendsSize);
+                        
                 if (list.get(i).getSecond() == 2) {
                     dayToKnow = 2;
                     secondPerson = list.get(i).getFirst().getPersonID();
-                    print(spreader, firstPerson, secondPersonFriends, secondPersonFriendsSize, secondPerson, dayToKnow);
+                    print(spreader, firstPerson, secondPersonFriend, day2RumorPropagation, secondPerson, dayToKnow);
                     return;
                 } else if (list.get(i).getSecond() > 2) {
                     dayToKnow = list.get(i).getSecond();
                     secondPerson = list.get(i).getFirst().getPersonID();
-                    print(spreader, firstPerson, secondPersonFriends, secondPersonFriendsSize, secondPerson, dayToKnow);
+                    print(spreader, firstPerson, secondPersonFriend, day2RumorPropagation, secondPerson, dayToKnow);
                     return;
+                }
+            }
+            
+        }
+    }
+    
+    //method to get friends lists for those students which will spread the rumor on the second day
+    public static void computeForDay2(Student spreader, int firstPerson, ArrayList<Student> secondPersonFriend) {
+        for (int i = 0; i < spreader.friends.size(); i++) {
+            if (spreader.friends.get(i).getPersonID() != firstPerson && spreader.friends.get(i).friends.size() > 1) {
+                if (!secondPersonFriend.contains(spreader.friends.get(i))) {
+                    secondPersonFriend.add(spreader.friends.get(i)); 
                 }
             }
         }
     }
-
-    //method to print rumor propagation after we get the earliest spreader
-    public static void print(Student spreader, int firstPerson, Student secondPersonFriends, int secondPersonFriendsSize, int secondPerson, int dayToKnow) {
+    
+    //method to calculate second day rumor propagation for multiple days cases
+    public static int secondDayRumorPropagation(ArrayList<Student> secondPersonFriend, int secondPersonFriendsSize){
+        for (int k = 0; k < secondPersonFriend.size(); k++) {
+            secondPersonFriendsSize += (secondPersonFriend.get(k).friends.size() - 1); //exclude spreader himself
+        }
+        return secondPersonFriendsSize;
+    }
+    
+    //method to print rumor propagation for multiple days cases
+    public static void print(Student spreader, int firstPerson, ArrayList<Student> secondPersonFriend, int secondPersonFriendsSize, int secondPerson, int dayToKnow) {
         int rumor = spreader.friends.size();
-        System.out.println("Day 1\n" + spreader + "\nThe rumor propagates at one jump is " + rumor);
+        System.out.println("Day 1\n" + "[" + spreader + "]" + "\nThe rumor propagates at one jump is " + rumor);
         System.out.println("I convinced " + firstPerson + " on day 1");
         System.out.println("");
 
-        System.out.println("Day 2\n" + secondPersonFriends + "\nThe rumor propagates at one jump is " + secondPersonFriendsSize);
+        System.out.println("Day 2\n" + secondPersonFriend + "\nThe rumor propagates at one jump is " + secondPersonFriendsSize);
         System.out.println("I convinced " + secondPerson + (dayToKnow == 2 ? " on day 2" : (" on day " + dayToKnow)));
     }
 
