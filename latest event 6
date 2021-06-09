@@ -31,7 +31,7 @@ class Graph {
     }
 
     // A recursive method to count
-    // all paths from 'src' (Initial point) to 'd' (Destination point).
+    // all paths from 'src' (Initial point) to 'des' (Destination point).
     // count =path count
     int countUtil(int src, int des, int count, int start, int loop, ArrayList<Integer> way) {
         // Stops recursive call when
