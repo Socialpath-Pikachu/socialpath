@@ -73,7 +73,7 @@ public class Event5 {
             }
         } else { //disconnected graph
             //no connection between spreader and crush
-            if (spreaderCluster.contains(spreader.getPersonID()) && crushCluster.contains(myCrush.getPersonID())) {
+            if (noConnection(spreaderCluster, crushCluster, spreader, myCrush)) {
                 sb.append("My crush and the spreader have no connection")
                         .append("\nMy crush will never know the rumor");
                 System.out.println(sb);
@@ -406,4 +406,8 @@ public class Event5 {
         System.out.println("I convinced " + secondPerson + (dayToKnow == 2 ? " on day 2" : (" on day " + dayToKnow)));
     }
 
+    //no connection between spreader and crush
+    public static boolean noConnection(ArrayList<Integer> spreaderCluster, ArrayList<Integer> crushCluster, Student spreader, Student myCrush){
+        return spreaderCluster.contains(spreader.getPersonID()) && crushCluster.contains(myCrush.getPersonID());
+    }
 }
