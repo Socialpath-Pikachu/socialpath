@@ -1,11 +1,5 @@
-package at.ls.neo4j.socialpath;
-
 import java.util.Scanner;
 
-/**
- *
- * @author CHEESE
- */
 public class Tester {
     public static void main(String[] args) {
         Socialgraph graph= Students.addToGraph();
@@ -21,7 +15,7 @@ public class Tester {
         System.out.println("1. Event 1: Teaching a stranger to solve lab questions");
         System.out.println("2. Event 2: Chit-chat");
         System.out.println("3. Event 3: Your road to glory");
-        System.out.println("4. Arranging books");
+        System.out.println("4. Event 4: Arranging books");
         System.out.println("5. Event 5: meet your crush");
         System.out.println("6. Event 6: Friendship");
         System.out.println("7. Exit this system");
@@ -47,12 +41,12 @@ public class Tester {
                     mentee=s.nextLine();
                     System.out.println("");
                 }
-                Event.event1(mentor, mentee, graph);
+                Event123.event1(mentor, mentee, graph);
                 System.out.println("");
                 System.out.println("Do you wish to continue for event 2? (yes/no)");
                 String decision= s.nextLine();
                 if (decision.equalsIgnoreCase("yes")){
-                    Event.event2(mentor, mentee, graph);
+                    Event123.event2(mentor, mentee, graph);
                 }
                 break;
                 
@@ -61,7 +55,7 @@ public class Tester {
                    
             case 3:
                 graph.printEdges();
-                Event.event3(graph);
+                Event123.event3(graph);
                 break;
                 
             case 4:
@@ -69,9 +63,11 @@ public class Tester {
                 break;
                 
             case 5:
+                 Event5.Event5();
                  break;
                  
             case 6:
+                Event6.Event6();
                 break;
                 
             case 7:
@@ -84,9 +80,8 @@ public class Tester {
                 menu(graph);
                 break;
         }
-
-        System.out.println("");
         menu(graph);
+        System.out.println("");
     }
     
 
